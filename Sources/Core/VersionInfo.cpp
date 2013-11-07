@@ -2,6 +2,8 @@
 
 #if __linux__
 #define OS_PLATFORM_LINUX
+#include <sys/utsname.h>
+#include <sstream>
 #elif TARGET_OS_MAC
 #define OS_PLATFORM_MAC
 #elif defined _WIN32 || defined _WIN64
@@ -13,7 +15,11 @@
 std::string VersionInfo::GetVersionInfo()
 {
 #if defined(OS_PLATFORM_LINUX)
-	return std::string("Linux");
+    struct utsname buf;
+    uname(&buf);
+    std::stringstream ss;
+    ss << buf.sysname << " " << buf.release << " " << buf.version << " " << buf.machine;
+    return ss.str();
 #elif defined(TARGET_OS_MAC)
 	return std::string("Mac OS X");
 #elif defined (OS_PLATFORM_WINDOWS)
